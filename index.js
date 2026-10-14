@@ -1,8 +1,13 @@
 import express from 'express'
 import mysql from 'mysql2/promise'
+import cors from 'cors'
 import { myConfig } from './configDatabase.js'
 
 const app = express()
+
+app.use(cors({
+    origin: 'http://localhost:5173'
+}))
 
 app.use(express.json())
 
@@ -66,6 +71,16 @@ app.delete('/todos/:id', async (request, response) => {
     } catch (error) {
         console.log(error)
     }
+})
+
+//bejelentkezés
+app.post('/todos/login', (request, response)=>{
+    const {username, password} = request.body
+    if(username==process.env.LOGIN_USERNAME && password==process.env.LOGIN_PASSWORD){
+        response.json({success:true, msg: 'Sikeres bejelentkezés'})
+    }
+    else
+        response.json({success: false, msg: 'Hibás felhasználó jelszó páros'})
 })
 
 const port = process.env.PORT || 8000
